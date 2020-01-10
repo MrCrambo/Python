@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
 from collections import Counter
-
+from sklearn import svm, neighbors
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 
 def process_data_for_labels(ticker):
     days_count = 7
@@ -55,3 +57,14 @@ def extract_feature_sets(ticker):
 
     return X, y, df
 
+def predict(ticker):
+    X, y, df = extract_feature_sets(ticker)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    classifier = neighbors.KNeighborsClassifier()
+    classifier.fit(X_train, y_train)
+
+    confidence = classifier.score(X_test, y_test)
+    prediction = classifier.predict(X_test)
+
+    print('Predicted spread: ', Counter(prediction))
