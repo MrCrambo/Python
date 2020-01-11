@@ -12,7 +12,7 @@ def process_data_for_labels(ticker):
     df.fillna(0, inplace=True)
 
     for i in range(1, days_count + 1):
-        df['{}_{}d'.format(ticker, i)] = (df[ticker].shift(-i) - df[ticker]) / df[ticker]
+        df['{}_{}d'.format(ticker, i)] = (df[ticker] - df[ticker].shift(i)) / df[ticker]
 
     df.fillna(0, inplace=True)
     return tickers, df
@@ -67,4 +67,8 @@ def predict(ticker):
     confidence = classifier.score(X_test, y_test)
     prediction = classifier.predict(X_test)
 
+    print('Confidence is: ', confidence)
+    print('\n----\n')
     print('Predicted spread: ', Counter(prediction))
+
+predict('AAPL')
