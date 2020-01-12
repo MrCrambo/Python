@@ -57,7 +57,7 @@ def extract_feature_sets(ticker):
 
     return X, y, df
 
-def predict(ticker):
+def predict_neighbors(ticker):
     X, y, df = extract_feature_sets(ticker)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
@@ -71,4 +71,22 @@ def predict(ticker):
     print('\n----\n')
     print('Predicted spread: ', Counter(prediction))
 
-predict('AAPL')
+def predict_voting(ticker):
+    X, y, df = extract_feature_sets(ticker)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    classifier = VotingClassifier([('lsvc', svm.LinearSVC()),
+                                ('knn', neighbors.KNeighborsClassifier()),
+                                ('rfor', RandomForestClassifier())])
+    classifier.fit(X_train, y_train)
+
+    confidence = classifier.score(X_test, y_test)
+    prediction = classifier.predict(X_test)
+
+    print('Confidence is: ', confidence)
+    print('\n----\n')
+    print('Predicted spread: ', Counter(prediction))
+
+predict_voting('XOM')
+
