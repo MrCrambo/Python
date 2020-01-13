@@ -75,7 +75,7 @@ def predict_neighbors(ticker):
 def predict_voting(ticker):
     X, y, df = extract_feature_sets(ticker)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
     classifier = VotingClassifier([('lsvc', svm.LinearSVC()),
                                 ('lr', linear_model.LogisticRegression()),
