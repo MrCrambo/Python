@@ -4,6 +4,8 @@ from collections import Counter
 from sklearn import svm, neighbors
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn import linear_model
+from sp_manipul import get_sp_tickers
 
 def process_data_for_labels(ticker):
     days_count = 7
@@ -42,7 +44,6 @@ def extract_feature_sets(ticker):
 
     vals = df['{}_targets'.format(ticker)].values.tolist()
     str_vals = [str(i) for i in vals]
-    print('Data spread: ', Counter(str_vals))
     df.fillna(0, inplace=True)
 
     df = df.replace([np.inf, -np.inf], np.nan)
@@ -68,8 +69,8 @@ def predict_neighbors(ticker):
     prediction = classifier.predict(X_test)
 
     print('Confidence is: ', confidence)
-    print('\n----\n')
     print('Predicted spread: ', Counter(prediction))
+    print('----\n')
 
 def predict_voting(ticker):
     X, y, df = extract_feature_sets(ticker)
@@ -77,6 +78,7 @@ def predict_voting(ticker):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     classifier = VotingClassifier([('lsvc', svm.LinearSVC()),
+                                ('lr', linear_model.LogisticRegression()),
                                 ('knn', neighbors.KNeighborsClassifier()),
                                 ('rfor', RandomForestClassifier())])
     classifier.fit(X_train, y_train)
@@ -85,8 +87,9 @@ def predict_voting(ticker):
     prediction = classifier.predict(X_test)
 
     print('Confidence is: ', confidence)
-    print('\n----\n')
     print('Predicted spread: ', Counter(prediction))
+    print('----\n')
 
-predict_voting('XOM')
-
+for ticker in get_sp_tickers()[:20]:
+    print(ticker)
+    predict_voting(ticker)

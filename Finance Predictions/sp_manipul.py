@@ -109,4 +109,4 @@ def visualise_data():
     plt.tight_layout()
     plt.show()
 
-visualise_data()
+#visualise_data()
